@@ -1,0 +1,18 @@
+{
+    "sourceFile": "FYP_final/Backend/models/userAuthentication.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1732775555300,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1732775555300,
+            "name": "Commit-0",
+            "content": "const mongoose = require(\"mongoose\");\r\n\r\nconst userSchema = new mongoose.Schema({\r\n  firstName: {\r\n    type: String,\r\n    required: true,\r\n  },\r\n  lastName: {\r\n    type: String,\r\n    required: true,\r\n  },\r\n  email: {\r\n    type: String,\r\n    required: true,\r\n    unique: true,\r\n  },\r\n  password: {\r\n    type: String,\r\n    required: true,\r\n  },\r\n  userId: {\r\n    type: String,\r\n    unique: true,\r\n    required: true,\r\n  },\r\n});\r\n\r\nconst User = mongoose.model(\"User\", userSchema);\r\n\r\nmodule.exports = User;\r\n"
+        }
+    ]
+}

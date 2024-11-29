@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTP Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 50px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        width: 300px;
+        margin: auto;
+        text-align: center;
+      }
+      input[type="text"],
+      input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .message {
+        margin-top: 10px;
+        font-size: 1.1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>OTP Verification</h2>
+    <form id="otp-form">
+      <input type="text" id="otp" placeholder="Enter OTP" required />
+      <input type="submit" value="Verify OTP" />
+    </form>
+    <button id="resend-otp">Resend OTP</button>
+    <div class="message" id="message"></div>
+
+    <script>
+      // Function to get a cookie by name
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === " ") c = c.substring(1, c.length); // Trim leading space
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null; // Not found
+      }
+
+      document
+        .getElementById("otp-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const token = getCookie("verify-token");
+          const otp = document.getElementById("otp").value;
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/auth/register/verify",
+              {
+                // Update to your endpoint
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ otp, token }),
+              }
+            );
+
+            const result = await response.json();
+            const messageDiv = document.getElementById("message");
+            if (response.ok) {
+              messageDiv.textContent = result.message;
+              messageDiv.style.color = "green";
+
+              window.location.href = "/Login/index.html";
+            } else {
+              messageDiv.textContent = result.error;
+              messageDiv.style.color = "red";
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("message").textContent =
+              "An error occurred. Please try again.";
+          }
+        });
+
+      document
+        .getElementById("resend-otp")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/auth/register/verify",
+              {
+                // Update to your endpoint
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            const result = await response.json();
+            const messageDiv = document.getElementById("message");
+            if (response.ok) {
+              messageDiv.textContent = result.message;
+              messageDiv.style.color = "green";
+            } else {
+              messageDiv.textContent = result.error;
+              messageDiv.style.color = "red";
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("message").textContent =
+              "An error occurred. Please try again.";
+          }
+        });
+    </script>
+  </body>
+</html>

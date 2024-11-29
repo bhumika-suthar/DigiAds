@@ -1,0 +1,22 @@
+{
+    "sourceFile": "FYP_final/Backend/routes/authenticationRoutes.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1732775876601,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1732775925627,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,9 +4,9 @@\n const User = require(\"../models/userAuthentication\"); // Import the User model\r\n const router = express.Router();\r\n \r\n // Secret for JWT (you should store this in an environment variable)\r\n-const JWT_SECRET = \"your_jwt_secret_key\";\r\n+const JWT_SECRET = \"supersecret123\";\r\n \r\n // Signup Route\r\n router.post(\"/signup\", async (req, res) => {\r\n   const { firstName, lastName, email, password } = req.body;\r\n"
+                }
+            ],
+            "date": 1732775876601,
+            "name": "Commit-0",
+            "content": "const express = require(\"express\");\r\nconst bcrypt = require(\"bcryptjs\");\r\nconst jwt = require(\"jsonwebtoken\");\r\nconst User = require(\"../models/userAuthentication\"); // Import the User model\r\nconst router = express.Router();\r\n\r\n// Secret for JWT (you should store this in an environment variable)\r\nconst JWT_SECRET = \"your_jwt_secret_key\";\r\n\r\n// Signup Route\r\nrouter.post(\"/signup\", async (req, res) => {\r\n  const { firstName, lastName, email, password } = req.body;\r\n\r\n  try {\r\n    // Check if the user already exists\r\n    const existingUser = await User.findOne({ email });\r\n    if (existingUser) {\r\n      return res.status(400).json({ error: \"User already exists\" });\r\n    }\r\n\r\n    // Hash the password\r\n    const hashedPassword = await bcrypt.hash(password, 10);\r\n\r\n    // Create a new user\r\n    const newUser = new User({\r\n      firstName,\r\n      lastName,\r\n      email,\r\n      password: hashedPassword,\r\n    });\r\n\r\n    // Save the user to the database\r\n    await newUser.save();\r\n\r\n    // Send response\r\n    res.status(201).json({ message: \"User created successfully\" });\r\n  } catch (error) {\r\n    console.error(error);\r\n    res.status(500).json({ error: \"Server error\" });\r\n  }\r\n});\r\n\r\n// Login Route\r\nrouter.post(\"/login\", async (req, res) => {\r\n  const { email, password } = req.body;\r\n\r\n  try {\r\n    // Check if the user exists\r\n    const user = await User.findOne({ email });\r\n    if (!user) {\r\n      return res.status(400).json({ error: \"User not found\" });\r\n    }\r\n\r\n    // Check if the password is correct\r\n    const isPasswordCorrect = await bcrypt.compare(password, user.password);\r\n    if (!isPasswordCorrect) {\r\n      return res.status(400).json({ error: \"Invalid credentials\" });\r\n    }\r\n\r\n    // Generate a JWT token\r\n    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {\r\n      expiresIn: \"1h\",\r\n    });\r\n\r\n    // Send response with token\r\n    res.status(200).json({ message: \"Login successful\", token });\r\n  } catch (error) {\r\n    console.error(error);\r\n    res.status(500).json({ error: \"Server error\" });\r\n  }\r\n});\r\n\r\nmodule.exports = router;\r\n"
+        }
+    ]
+}
