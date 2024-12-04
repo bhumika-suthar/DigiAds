@@ -331,3 +331,24 @@ header {
   color: white;
   border-radius: 4px;
 }
+/* Style for the dropdown options */
+#screen-select {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+#screen-select:focus {
+  border-color: #990000;
+}
+
+/* Style for the selected date in the calendar */
+.fc-day.selected {
+  background-color: #990000;
+  color: white;
+  font-weight: bold;
+}
+

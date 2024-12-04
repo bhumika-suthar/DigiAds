@@ -15,7 +15,7 @@
         padding: 0;
         box-sizing: border-box;
       }
-
+    
       body {
         font-family: Arial, sans-serif;
         background-color: #f4f4f9;
@@ -24,26 +24,29 @@
         flex-direction: column;
         height: 100vh;
       }
-
+    
       header {
         background-color: #990000;
         color: white;
         padding: 15px;
         text-align: center;
       }
-
+    
       .content {
         flex-grow: 1;
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
       }
-
+    
       .locations {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         margin-top: 20px;
       }
-
+    
       .location-card {
         background-color: white;
         border: 2px solid #990000;
@@ -56,46 +59,52 @@
         transition: transform 0.3s ease, background-color 0.3s ease;
         cursor: pointer;
       }
-
+    
       .location-card:hover {
         transform: scale(1.05);
         background-color: #ffcccc;
       }
-
+    
+      .location-dropdown {
+        display: none;
+        margin-top: 20px;
+        text-align: left;
+      }
+    
       .dynamic-section {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
         margin-top: 20px;
+        justify-content: center;
+        width: 100%;
       }
-
-      .calendar {
-        flex: 1;
+    
+      .calendar,
+      .campaign-form {
         background: white;
         border: 2px solid #990000;
         border-radius: 10px;
-        padding: 10px;
-        min-width: 300px;
-        height: 600px;
-        overflow: hidden;
-      }
-
-      .campaign-form {
-        flex: 1;
-        background-color: #ffffff;
-        border: 2px solid #990000;
-        border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 600px;
+        box-sizing: border-box;
+      }
+    
+      .calendar {
+        min-height: 400px; /* Set a minimum height for the calendar */
+      }
+    
+      .campaign-form {
         min-width: 300px;
       }
-
+    
       .campaign-form label {
         display: block;
         margin-bottom: 10px;
         font-weight: bold;
       }
-
+    
       .campaign-form input,
       .campaign-form textarea,
       .campaign-form select,
@@ -105,7 +114,7 @@
         padding: 10px;
         font-size: 14px;
       }
-
+    
       .campaign-form button {
         background-color: #990000;
         color: white;
@@ -113,62 +122,42 @@
         border-radius: 5px;
         cursor: pointer;
       }
-
+    
       .campaign-form button:hover {
         background-color: #cc0000;
       }
-
+    
       footer {
         text-align: center;
         padding: 15px;
         background-color: #333;
         color: white;
       }
+    
+      /* Style for the dropdown options */
+      #screen-select {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+      }
+    
+      #screen-select:focus {
+        border-color: #990000;
+      }
+    
+      /* Style for the selected date in the calendar */
+      .fc-day.selected {
+        background-color: #990000;
+        color: white;
+        font-weight: bold;
+      }
     </style>
+    
   </head>
-  <!-- <body>
-    <header>
-      <h1>Sukkur City Information</h1>
-    </header>
 
-    <div class="content">
-      <div class="locations">
-        <div class="location-card" id="mission-road">
-          <h3>Mission Road</h3>
-          <p>
-            Mission Road is a major road in Sukkur, known for its bustling
-            markets and shops.
-          </p>
-        </div>
-        <div class="location-card" id="military-road">
-          <h3>Military Road</h3>
-          <p>
-            Military Road connects various key locations and is known for its
-            strategic importance.
-          </p>
-        </div>
-        <div class="location-card" id="barrage-colony">
-          <h3>Barrage Colony</h3>
-          <p>
-            Barrage Colony is a residential area near the Sukkur Barrage,
-            providing scenic views.
-          </p>
-        </div>
-        <div class="location-card" id="ghanta-ghar">
-          <h3>Ghanta Ghar</h3>
-          <p>
-            Ghanta Ghar (Clock Tower) is an iconic historical landmark in the
-            city of Sukkur.
-          </p>
-        </div>
-      </div>
-
-      <div id="dynamic-container"></div>
-    </div>
-
-    <footer>
-      <p>&copy; 2024 Sukkur City Info. All Rights Reserved.</p>
-    </footer> -->
   <body>
     <header>
       <h1 id="city-name">City Information</h1>
@@ -187,112 +176,16 @@
     </footer>
 
     <!-- FullCalendar JavaScript -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const dynamicContainer = document.getElementById("dynamic-container");
-
-        document.querySelectorAll(".location-card").forEach((card) => {
-          card.addEventListener("click", function () {
-            // Clear previous content
-            dynamicContainer.innerHTML = "";
-
-            // Create a dynamic section
-            const dynamicSection = document.createElement("div");
-            dynamicSection.className = "dynamic-section";
-
-            // Create calendar container
-            const calendarContainer = document.createElement("div");
-            calendarContainer.className = "calendar";
-            calendarContainer.id = "calendar";
-
-            // Create campaign form
-            const formContainer = document.createElement("div");
-            formContainer.className = "campaign-form";
-            formContainer.innerHTML = `
-                    <div id="campaign-form" class="campaign-form">
-                        <label for="campaign-name">Campaign Name:</label>
-                        <input type="text" id="campaign-name" placeholder="Enter campaign name" required>
-
-                        <label for="campaign-description">Campaign Description:</label>
-                        <textarea id="campaign-description" placeholder="Enter campaign description" rows="3"></textarea>
-
-                        <label for="video-option">Choose Video Option:</label>
-                        <select id="video-option">
-                            <option value="">-- Select an Option --</option>
-                            <option value="youtube">YouTube URL</option>
-                            <option value="file">Upload Video File</option>
-                        </select>
-
-                        <div id="youtube-url-input" style="display: none;">
-                            <label for="youtube-url">YouTube URL:</label>
-                            <input type="url" id="youtube-url" placeholder="Enter YouTube URL">
-                        </div>
-
-                        <div id="file-upload-input" style="display: none;">
-                            <label for="video-file">Upload Video File:</label>
-                            <input type="file" id="video-file" accept="video/*">
-                        </div>
-
-                        <button id="submit-campaign">Submit Campaign</button>
-                    </div>
-                `;
-
-            // Append calendar and form to the dynamic section
-            dynamicSection.appendChild(calendarContainer);
-            dynamicSection.appendChild(formContainer);
-
-            // Add the dynamic section to the page
-            dynamicContainer.appendChild(dynamicSection);
-
-            // Initialize FullCalendar
-            const calendar = new FullCalendar.Calendar(calendarContainer, {
-              initialView: "timeGridWeek",
-              headerToolbar: {
-                left: "prev,next today",
-                center: "title",
-                right: "timeGridWeek,timeGridDay",
-              },
-              height: 600,
-              selectable: true,
-              dateClick: function (info) {
-                alert("You selected: " + info.dateStr);
-              },
-            });
-            calendar.render();
-
-            // Handle video option selection
-            const videoOption = document.getElementById("video-option");
-            const youtubeInput = document.getElementById("youtube-url-input");
-            const fileInput = document.getElementById("file-upload-input");
-
-            videoOption.addEventListener("change", function () {
-              const selectedOption = videoOption.value;
-
-              // Toggle fields based on selection
-              youtubeInput.style.display =
-                selectedOption === "youtube" ? "block" : "none";
-              fileInput.style.display =
-                selectedOption === "file" ? "block" : "none";
-            });
-          });
-        });
-      });
-    </script> -->
-    <!-- FullCalendar JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Get city name from URL
         const urlParams = new URLSearchParams(window.location.search);
         const cityName = urlParams.get("city");
-        document.getElementById(
-          "city-name"
-        ).innerText = `${cityName} City Information`;
+        document.getElementById("city-name").innerText = `${cityName} City Information`;
 
         // Fetch data from the API
-        fetch(`http://localhost:5000/api/locations`)
+        fetch("http://localhost:5000/api/locations")
           .then((response) => response.json())
           .then((data) => {
             // Find the data for the selected city
@@ -327,27 +220,47 @@
 
         // Add event listener to the locations container for dynamically created cards
         const dynamicContainer = document.getElementById("dynamic-container");
-        document
-          .querySelector(".locations")
-          .addEventListener("click", function (e) {
-            if (e.target.closest(".location-card")) {
-              const card = e.target.closest(".location-card");
-              const locationId = card.id;
+        document.querySelector(".locations").addEventListener("click", function (e) {
+          if (e.target.closest(".location-card")) {
+            const card = e.target.closest(".location-card");
+            const locationId = card.id;
 
-              // Clear previous content
+            // Show the dropdown menu below the clicked card
+            let dropdown = card.querySelector(".location-dropdown");
+            if (!dropdown) {
+              dropdown = document.createElement("div");
+              dropdown.className = "location-dropdown";
+              dropdown.innerHTML = `
+                <label for="screen-select">Select Screen:</label>
+                <select id="screen-select">
+                  <option value="">-- Select an Option --</option>
+                  <option value="screen1">Screen 1</option>
+                  <option value="screen2">Screen 2</option>
+                </select>
+              `;
+              card.appendChild(dropdown);
+            }
+            dropdown.style.display = "block";
+
+            // Event listener for screen selection
+            const screenSelect = dropdown.querySelector("#screen-select");
+            screenSelect.addEventListener("change", function () {
+              const selectedScreen = screenSelect.value;
+
+              // Clear previous content in dynamic-container
               dynamicContainer.innerHTML = "";
 
-              // Create a dynamic section
+              // Create the Calendar and Form containers
               const dynamicSection = document.createElement("div");
               dynamicSection.className = "dynamic-section";
 
               // Create calendar container
               const calendarContainer = document.createElement("div");
               calendarContainer.className = "calendar";
-              calendarContainer.id = "calendar";
 
               // Create campaign form
-              const formContainer = document.createElement("div");
+             // Create campaign form
+             const formContainer = document.createElement("div");
               formContainer.className = "campaign-form";
               formContainer.innerHTML = `
           <div id="campaign-form" class="campaign-form">
@@ -378,45 +291,30 @@
           </div>
         `;
 
-              // Append calendar and form to the dynamic section
+              // Append to the dynamic section
               dynamicSection.appendChild(calendarContainer);
               dynamicSection.appendChild(formContainer);
-
-              // Add the dynamic section to the page
               dynamicContainer.appendChild(dynamicSection);
 
-              // Initialize FullCalendar
+              // Initialize FullCalendar inside the calendar container
               const calendar = new FullCalendar.Calendar(calendarContainer, {
-                initialView: "timeGridWeek",
-                headerToolbar: {
-                  left: "prev,next today",
-                  center: "title",
-                  right: "timeGridWeek,timeGridDay",
-                },
-                height: 600,
-                selectable: true,
+                initialView: "dayGridMonth",
                 dateClick: function (info) {
-                  alert("You selected: " + info.dateStr);
-                },
+                  // Deselect any previously selected date
+                  const previouslySelected = document.querySelector(".fc-day.selected");
+                  if (previouslySelected) {
+                    previouslySelected.classList.remove('selected');
+                  }
+
+                  // Select the clicked date
+                  info.dayEl.classList.add('selected');
+                }
               });
+
               calendar.render();
-
-              // Handle video option selection
-              const videoOption = document.getElementById("video-option");
-              const youtubeInput = document.getElementById("youtube-url-input");
-              const fileInput = document.getElementById("file-upload-input");
-
-              videoOption.addEventListener("change", function () {
-                const selectedOption = videoOption.value;
-
-                // Toggle fields based on selection
-                youtubeInput.style.display =
-                  selectedOption === "youtube" ? "block" : "none";
-                fileInput.style.display =
-                  selectedOption === "file" ? "block" : "none";
-              });
-            }
-          });
+            });
+          }
+        });
       });
     </script>
   </body>
